@@ -1,20 +1,8 @@
-FROM alpine:3.15
-
-# Set working directory.
-RUN mkdir /app
+FROM ruby:3.0.3-alpine3.15
+RUN apk add --update build-base tzdata nodejs npm postgresql-dev
+RUN gem install rails -v '6.1.4'
+RUN npm install --global yarn
+RUN yarn install --check-files
 WORKDIR /app
-
-# Install ruby
-
-RUN apk update \
-    && apk add ruby postgresql14
-RUN mkdir /run/postgresql \
-    && chown postgres:postgres /run/postgresql/
-USER postgres
-RUN mkdir /var/lib/postgresql/data \
-    && chmod 0700 /var/lib/postgresql/data \
-    && initdb -D /var/lib/postgresql/data \
-    && echo "host all all 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf \
-    && echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
-
-ENTRYPOINT pg_ctl start -D /var/lib/postgresql/data && sh
+ADD Gemfile Gemfile.lock /app/
+RUN bundle install

@@ -1,0 +1,24 @@
+version: '3.6'
+services:
+  db:
+    image: 'postgres:alpine3.15'
+    restart: always
+    ports:
+    - 55432:5432
+    environment:
+      POSTGRES_PASSWORD: example
+      DATABASE_URL: postgres://postgres@db
+  turnero-web:
+    stdin_open: true # Enables debugging capabilities when attached to this container.
+    tty: true # Enables debugging capabilities when attached to this container.
+    build: .
+    volumes:
+      - ./:/app
+    working_dir: /app
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=turnero
+      - SKIP_DB_SETUP=true
+    depends_on:
+      - db
+
