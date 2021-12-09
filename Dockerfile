@@ -6,3 +6,8 @@ RUN yarn install --check-files
 WORKDIR /app
 ADD Gemfile Gemfile.lock /app/
 RUN bundle install
+
+EXPOSE 3000
+## docker-compose run --no-deps turnero-web rails new . --force --database=postgresql --api
+# Configure the main process to run when running the image
+CMD ["rails", "server", "-b", "0.0.0.0"]

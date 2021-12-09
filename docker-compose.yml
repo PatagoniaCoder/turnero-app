@@ -8,13 +8,15 @@ services:
     environment:
       POSTGRES_PASSWORD: example
       DATABASE_URL: postgres://postgres@db
+    volumes:
+        - ./db-data:/var/lib/postgresql/data
   turnero-web:
     stdin_open: true # Enables debugging capabilities when attached to this container.
     tty: true # Enables debugging capabilities when attached to this container.
     build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
-      - ./:/app
-    working_dir: /app
+      - .:/app
     command: puma
     ports:
     - 30000:3000
@@ -24,4 +26,3 @@ services:
       - SKIP_DB_SETUP=true
     depends_on:
       - db
-
